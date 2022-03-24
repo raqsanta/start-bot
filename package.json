@@ -13,6 +13,7 @@
     "discord-api-types": "^0.29.0",
     "discord.js": "^13.6.0",
     "dotenv": "^16.0.0",
+    "mongoose": "^6.2.8",
     "puppeteer": "^13.5.1"
   }
 }
