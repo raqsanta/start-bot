@@ -3,7 +3,8 @@ const mongoose = require('mongoose')
 const LinkSchema = mongoose.Schema({
 
     title: {
-        type: String
+        type: String,
+        unique: true
     },
 
     link: {

@@ -2,8 +2,20 @@ const mongoose = require('mongoose')
 
 const TodoSchema = mongoose.Schema({
 
-    todos: {
+    title: {
         type: String
+    },
+
+    date: {
+        day: {
+            type: Number
+        },
+        month: {
+            type: Number
+        },
+        year: {
+            type: Number
+        }
     }
 
 })

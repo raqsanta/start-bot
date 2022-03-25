@@ -5,7 +5,8 @@ require('dotenv').config()
 const mongoose = require('mongoose');
 const puppeteer = require('puppeteer');
 const Link = require('./models/Links');
-const Meet = require('./models/Meet')
+const Meet = require('./models/Meet');
+const Todo = require('./models/Todo');
 
 client.on('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`);
@@ -31,7 +32,17 @@ client.on('messageCreate', async interaction => {
     const helpEmbed = new MessageEmbed()
       .setColor('#d94479')
       .addField('Projeto Start',
-        '**st!help** - **st!ajuda** - **st!sobre**: Lista todos os comandos\n**st!regras**: Lista se não todas, ao menos muitas das regras do projeto Start.\n**st!meet** - **st!reunião** - **st!palestra**: Listar todas as informações sobre a reunião de hoje.\n**st!board** - **st!todo** - **st!tarefas**: Lista todos os afazeres pendentes e suas respectivas datas de entrega.\n**st!modulo**: Retorna uma imagem contendo informações sobre o módulo atual.'
+      [
+        '**st!help** - **st!ajuda** - **st!sobre**: Lista todos os comandos',
+        '**st!links**: Lista todos os links salvos pelos usuários para futuros estudos.',
+        '**st!addlink <titulo>$<link>$<preço>**: Adiciona um link publicamente para o banco de dados.',
+        '**st!removelink <titulo>**: Remove um link adicionado através do título.',
+        '**st!meet - st!reunião - st!palestra**: Recebe informações sobre a reunião de hoje assim que ela é anunciada.',
+        '**st!ticket <texto>**: Envia uma reclamação e rapidamente trabalharemos em uma solução.',
+        '**st!todo - st!board - st!tarefas**: Lista todas as tarefas pendentes e os dias restantes para o dia de entrega.',
+        '**st!addtodo <texto>$<dd/mm/yyyy>**: Adiciona uma tarefa pendente através da descrição e data de entrega.',
+        '**st!modulo**: Recebe informações sobre o atual módulo do Start.'
+      ].join('\n')
       )
       .setDescription('O Projeto Start é uma aliança entre a Rede Cidadã, a Accenture do Brasil e a Accenture Foundation, que vem desde 2013, quando foi iniciado e denominado como Programming for the Future. Em 2016, por sua vez, foi denominado como Accenture do Futuro e a partir de 2018 como Start, justamente por incorporar habilidades tecnológicas de e-learning, aos moldes da Accenture Brasil, ou seja, a plataforma Canvas, na trajetória da formação de jovens para o mundo do trabalho. Assim como foram incorporadas habilidades e competências comportamentais. Em 2019, o projeto expandiu sua atuação, passando a ser chamado de Start (Latam), contando com o investimento direto da própria Accenture Foundation. Em âmbito nacional, o projeto acontece em Belo Horizonte e Recife e na América Latina na Argentina, México, Chile e Colômbia.')
       .setTimestamp()
@@ -59,30 +70,52 @@ client.on('messageCreate', async interaction => {
       link: arguments[1],
       price: arguments[2]
     }).save()
+      .then(() => {
+        interaction.channel.send('A página **' + arguments[0] + '** foi adicionada aos links!')
+      })
+      .catch(() => {
+        interaction.channel.send('Esse título já se encontra na lista de links!')
+      })
 
-    interaction.channel.send('A página **' + arguments[0] + '** foi adicionada aos links!')
+
+  }
+
+  if (message.toLowerCase().startsWith('removelink ')) {
+
+    const arguments = message.substring(11)
+
+    Link.deleteOne({
+      title: arguments
+    })
+      .then((element) => {
+        if(element.deletedCount > 0){
+          interaction.channel.send('Link removido com sucesso!')
+        }else{
+          interaction.channel.send('Link não encontrado na lista!')
+
+        }
+      })
 
   }
 
   if (message.toLowerCase() == 'links') {
 
-
     Link.find(async (error, array) => {
 
       if (error) return
 
-      const linksArray = await array.map((element, index) => {
+      const linksArray = await array.map((element) => {
 
         const price = element.price <= 0 ?
           'GRÁTIS'
           :
           'R$ ' + price
 
-        return index + '. ' + element.title + ' - ' + element.link + ' - ' + price + '\n'
+        return element.title + ' - ' + element.link + ' - ' + price + '\n'
 
       })
 
-      interaction.channel.send('Lista de cursos salvos:\n'+linksArray.toString())
+      interaction.channel.send('Lista de Cursos Salvos:\n' + linksArray.join(''))
 
     })
 
@@ -131,9 +164,60 @@ client.on('messageCreate', async interaction => {
 
   }
 
+  if (message.toLowerCase().startsWith('addtodo ')) {
+
+    const arguments = message.substring(8).split('$')
+
+    if (arguments.length != 2) {
+      interaction.channel.send('A sintaxe correta é **st!addlink <texto>$<dd/mm/yyyy>**!')
+      return
+    }
+
+    const date = arguments[1].split('/')
+    const day = date[0]
+    const month = date[1]
+    const year = date[2]
+
+    new Todo({
+      title: arguments[0],
+      date: {
+
+        day: parseInt(day, 10),
+        month: parseInt(month, 10) - 1,
+        year: parseInt(year, 10),
+
+      }
+    }).save()
+
+    interaction.channel.send('A tarefa **' + arguments[0] + '** foi adicionada a lista de to do!')
+
+  }
+
   if (message.toLowerCase() == 'board' || message.toLowerCase() == 'todo' || message.toLowerCase() == 'tarefas') {
 
-    interaction.channel.send('aqui estarão todas as tarefas e afazares pendentes:')
+    Todo.find(async (error, array) => {
+
+      if (error) return
+
+      const currentDate = new Date()
+
+      const todoList = await array.map((element) => {
+
+        const elementDate = new Date(element.date.year, element.date.month, element.date.day)
+
+        const timeRemaining = new Date(elementDate - currentDate)
+        const daysRemaining = Math.round(timeRemaining / 86400000)
+
+        if (daysRemaining >= 0) {
+          return element.title + ' - ' + daysRemaining + ' dias restantes'
+        }
+
+      })
+
+      todoList && todoList[0] != undefined &&
+        interaction.channel.send('Lista de Pendências:\n' + todoList.join('\n'))
+
+    })
 
   }
 
@@ -171,42 +255,6 @@ client.on('messageCreate', async interaction => {
     })()
 
   }
-
-  if (message.toLowerCase() == 'scrap') {
-
-    (async () => {
-
-      const browser = await puppeteer.launch();
-      const page = await browser.newPage();
-      await page.goto('https://academia.iphac.org.br/login/index.php');
-
-      const currentDate = Date.now()
-
-      await page.evaluate(async (CPF, PASSWORD) => {
-
-        document.getElementById('username').value = CPF
-        document.getElementById('password').value = PASSWORD
-
-      }, process.env.USER_CPF, process.env.USER_PASSWORD)
-
-      await page.click('[id="loginbtn"]')
-
-      await page.waitForNavigation();
-
-      await page.screenshot({ path: './images/screenshot-' + currentDate + '.png' });
-
-      await browser.close();
-
-      const attachment = new MessageAttachment('./images/screenshot-' + currentDate + '.png')
-
-      interaction.reply({ files: [attachment] })
-
-    })();
-
-
-  }
-
-
 
 })
 
