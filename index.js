@@ -173,7 +173,7 @@ client.on('messageCreate', async interaction => {
     const arguments = message.substring(8).split('$')
 
     if (arguments.length != 2) {
-      interaction.channel.send('A sintaxe correta é **st!addlink <texto>$<dd/mm/yyyy>**!')
+      interaction.channel.send('A sintaxe correta é **st!addtodo <texto>$<dd/mm/yyyy>**!')
       return
     }
 
@@ -210,15 +210,23 @@ client.on('messageCreate', async interaction => {
         const elementDate = new Date(element.date.year, element.date.month, element.date.day)
 
         const timeRemaining = new Date(elementDate - currentDate)
-        const daysRemaining = Math.round(timeRemaining / 86400000)
+        const daysRemaining = (Math.round(timeRemaining / 86400000)) + 1
 
         if (daysRemaining >= 0) {
+
           return element.title + ' - ' + daysRemaining + ' dias restantes'
+
         }
 
       })
 
-      todoList && todoList[0] != undefined &&
+      const filterList = await todoList.filter((element) => {
+
+        return element !== undefined
+
+      })
+
+      filterList &&
         interaction.channel.send('Lista de Pendências:\n' + todoList.join('\n'))
 
     })
