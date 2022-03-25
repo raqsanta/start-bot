@@ -2,7 +2,7 @@
 
 Para que o bot funcione, você precisa, primeiramente, instalar o node.js.
 
-Em um prompt de comando, você deve direcionar-se ao caminho do projeto e digitar:
+Em um prompt de comando, direcione-se ao caminho do projeto e digite:
 
 > npm i
 
