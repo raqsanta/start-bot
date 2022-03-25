@@ -20,11 +20,11 @@ main().then(() => console.log('MongoDB is working properly!')).catch(err => cons
 client.on('messageCreate', async interaction => {
 
   const message = interaction.content.startsWith('st!') &&
-    interaction.content.substring(3).toLowerCase() || null
+    interaction.content.substring(3) || null
 
   if (!message) return
 
-  if (message == 'help' || message == 'sobre' || message == 'ajuda') {
+  if (message.toLowerCase() == 'help' || message.toLowerCase() == 'sobre' || message.toLowerCase() == 'ajuda') {
 
     interaction.reply('Algumas informações sobre o robô foram enviadas ao seu privado.')
 
@@ -43,7 +43,7 @@ client.on('messageCreate', async interaction => {
 
   }
 
-  if (message.startsWith('addlink ')) {
+  if (message.toLowerCase().startsWith('addlink ')) {
 
     const arguments = message.substring(8).split('$')
 
@@ -64,31 +64,31 @@ client.on('messageCreate', async interaction => {
 
   }
 
-  if (message == 'links') {
+  if (message.toLowerCase() == 'links') {
 
 
     Link.find(async (error, array) => {
 
       if (error) return
 
-      const linksArray = await array.map((element) => {
+      const linksArray = await array.map((element, index) => {
 
         const price = element.price <= 0 ?
           'GRÁTIS'
           :
           'R$ ' + price
 
-        return element.title + ' - ' + element.link + ' - ' + price + '\n'
+        return index + '. ' + element.title + ' - ' + element.link + ' - ' + price + '\n'
 
       })
 
-      interaction.channel.send('Lista de links salvos:\n'+linksArray.toString())
+      interaction.channel.send('Lista de cursos salvos:\n'+linksArray.toString())
 
     })
 
   }
 
-  if (message == 'meet' || message == 'reunião' || message == 'palestra') {
+  if (message.toLowerCase() == 'meet' || message.toLowerCase() == 'reunião' || message.toLowerCase() == 'palestra') {
 
     Meet.find(function (err, arr) {
 
@@ -114,7 +114,7 @@ client.on('messageCreate', async interaction => {
 
   }
 
-  if (message.startsWith('ticket ')) {
+  if (message.toLowerCase().startsWith('ticket ')) {
 
     let report = message.substring(7)
     let userID = process.env.ADMIN_ID
@@ -131,13 +131,13 @@ client.on('messageCreate', async interaction => {
 
   }
 
-  if (message == 'board' || message == 'todo' || message == 'tarefas') {
+  if (message.toLowerCase() == 'board' || message.toLowerCase() == 'todo' || message.toLowerCase() == 'tarefas') {
 
     interaction.channel.send('aqui estarão todas as tarefas e afazares pendentes:')
 
   }
 
-  if (message == 'modulo') {
+  if (message.toLowerCase() == 'modulo') {
 
     (async () => {
 
@@ -172,7 +172,7 @@ client.on('messageCreate', async interaction => {
 
   }
 
-  if (message == 'scrap') {
+  if (message.toLowerCase() == 'scrap') {
 
     (async () => {
 
