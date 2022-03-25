@@ -4,6 +4,7 @@ require('dotenv').config()
 
 const mongoose = require('mongoose');
 const puppeteer = require('puppeteer');
+const Link = require('./models/Links');
 const Meet = require('./models/Meet')
 
 client.on('ready', () => {
@@ -26,24 +27,64 @@ client.on('messageCreate', async interaction => {
   if (message == 'help' || message == 'sobre' || message == 'ajuda') {
 
     interaction.reply('Algumas informações sobre o robô foram enviadas ao seu privado.')
-    
+
     const helpEmbed = new MessageEmbed()
-    .setColor('#b93bb9')
-    .addField('Lista de Comandos',
-      'st!help - st!ajuda - st!sobre: Lista todos os comandos\nst!regras: Lista se não todas, ao menos muitas das regras do projeto Start.\nst!meet - st!reunião - st!palestra: Listar todas as informações sobre a reunião de hoje.\nst!board - st!todo - st!tarefas: Lista todos os afazeres pendentes e suas respectivas datas de entrega.\nst!modulo: Retorna uma imagem contendo informações sobre o módulo atual.'
-    )
-    .setTimestamp()
-    .setFooter({ text: 'Por Tathy do Start' });
+      .setColor('#d94479')
+      .addField('Projeto Start',
+        '**st!help** - **st!ajuda** - **st!sobre**: Lista todos os comandos\n**st!regras**: Lista se não todas, ao menos muitas das regras do projeto Start.\n**st!meet** - **st!reunião** - **st!palestra**: Listar todas as informações sobre a reunião de hoje.\n**st!board** - **st!todo** - **st!tarefas**: Lista todos os afazeres pendentes e suas respectivas datas de entrega.\n**st!modulo**: Retorna uma imagem contendo informações sobre o módulo atual.'
+      )
+      .setDescription('O Projeto Start é uma aliança entre a Rede Cidadã, a Accenture do Brasil e a Accenture Foundation, que vem desde 2013, quando foi iniciado e denominado como Programming for the Future. Em 2016, por sua vez, foi denominado como Accenture do Futuro e a partir de 2018 como Start, justamente por incorporar habilidades tecnológicas de e-learning, aos moldes da Accenture Brasil, ou seja, a plataforma Canvas, na trajetória da formação de jovens para o mundo do trabalho. Assim como foram incorporadas habilidades e competências comportamentais. Em 2019, o projeto expandiu sua atuação, passando a ser chamado de Start (Latam), contando com o investimento direto da própria Accenture Foundation. Em âmbito nacional, o projeto acontece em Belo Horizonte e Recife e na América Latina na Argentina, México, Chile e Colômbia.')
+      .setTimestamp()
+      .setFooter({ text: 'Por Tathy do Start' });
 
     interaction.author.send({ embeds: [helpEmbed] })
 
-    
+
 
   }
 
-  if (message == 'regras') {
+  if (message.startsWith('addlink ')) {
 
-    interaction.channel.send('aqui serão enviadas as regras do site')
+    const arguments = message.substring(8).split('$')
+
+    if (arguments.length != 3) {
+      interaction.channel.send('A sintaxe correta é **st!addlink <titulo>$<link>$<preço>**!')
+      return
+    }
+
+    arguments[2] = parseInt(arguments[2])
+
+    const addLink = new Link({
+      title: arguments[0],
+      link: arguments[1],
+      price: arguments[2]
+    }).save()
+
+    interaction.channel.send('A página **' + arguments[0] + '** foi adicionada aos links!')
+
+  }
+
+  if (message == 'links') {
+
+
+    Link.find(async (error, array) => {
+
+      if (error) return
+
+      const linksArray = await array.map((element) => {
+
+        const price = element.price <= 0 ?
+          'GRÁTIS'
+          :
+          'R$ ' + price
+
+        return element.title + ' - ' + element.link + ' - ' + price + '\n'
+
+      })
+
+      interaction.channel.send('Lista de links salvos:\n'+linksArray.toString())
+
+    })
 
   }
 
@@ -54,23 +95,39 @@ client.on('messageCreate', async interaction => {
       if (err) return
 
       const image = arr[0].image.startsWith('https://') || arr[0].image.startsWith('http://') ?
-      arr[0].image
-      :
-      ''
+        arr[0].image
+        :
+        ''
 
       const meetEmbed = new MessageEmbed()
-        .setColor('#b93bb9')
+        .setColor('#d94479')
         .setTitle(arr[0].title)
         .addField(arr[0].description.title,
           arr[0].description.text + arr[0].description.link
         )
         .setImage(image)
-        .setTimestamp()
         .setFooter({ text: 'Por Tathy do Start' });
 
       interaction.channel.send({ embeds: [meetEmbed] });
 
     });
+
+  }
+
+  if (message.startsWith('ticket ')) {
+
+    let report = message.substring(7)
+    let userID = process.env.ADMIN_ID
+
+    if (!userID) return
+
+    interaction.reply('Ticket enviado com sucesso!')
+
+    const user = await client.users.fetch(userID)
+
+    if (report.length <= 4) return
+
+    user.send('Olá! O usuário ' + interaction.author.username + ' enviou o seguinte ticket: **' + report + '**')
 
   }
 
