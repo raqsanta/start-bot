@@ -32,17 +32,17 @@ client.on('messageCreate', async interaction => {
     const helpEmbed = new MessageEmbed()
       .setColor('#d94479')
       .addField('Projeto Start',
-      [
-        '**st!help** - **st!ajuda** - **st!sobre**: Lista todos os comandos',
-        '**st!links**: Lista todos os links salvos pelos usuários para futuros estudos.',
-        '**st!addlink <titulo>$<link>$<preço>**: Adiciona um link publicamente para o banco de dados.',
-        '**st!removelink <titulo>**: Remove um link adicionado através do título.',
-        '**st!meet - st!reunião - st!palestra**: Recebe informações sobre a reunião de hoje assim que ela é anunciada.',
-        '**st!ticket <texto>**: Envia uma reclamação e rapidamente trabalharemos em uma solução.',
-        '**st!todo - st!board - st!tarefas**: Lista todas as tarefas pendentes e os dias restantes para o dia de entrega.',
-        '**st!addtodo <texto>$<dd/mm/yyyy>**: Adiciona uma tarefa pendente através da descrição e data de entrega.',
-        '**st!modulo**: Recebe informações sobre o atual módulo do Start.'
-      ].join('\n')
+        [
+          '**st!help** - **st!ajuda** - **st!sobre**: Lista todos os comandos',
+          '**st!links**: Lista todos os links salvos pelos usuários para futuros estudos.',
+          '**st!addlink <titulo>$<link>$<preço>**: Adiciona um link publicamente para o banco de dados.',
+          '**st!removelink <titulo>**: Remove um link adicionado através do título.',
+          '**st!meet - st!reunião - st!palestra**: Recebe informações sobre a reunião de hoje assim que ela é anunciada.',
+          '**st!ticket <texto>**: Envia uma reclamação e rapidamente trabalharemos em uma solução.',
+          '**st!todo - st!board - st!tarefas**: Lista todas as tarefas pendentes e os dias restantes para o dia de entrega.',
+          '**st!addtodo <texto>$<dd/mm/yyyy>**: Adiciona uma tarefa pendente através da descrição e data de entrega.',
+          '**st!modulo**: Recebe informações sobre o atual módulo do Start.'
+        ].join('\n')
       )
       .setDescription('O Projeto Start é uma aliança entre a Rede Cidadã, a Accenture do Brasil e a Accenture Foundation, que vem desde 2013, quando foi iniciado e denominado como Programming for the Future. Em 2016, por sua vez, foi denominado como Accenture do Futuro e a partir de 2018 como Start, justamente por incorporar habilidades tecnológicas de e-learning, aos moldes da Accenture Brasil, ou seja, a plataforma Canvas, na trajetória da formação de jovens para o mundo do trabalho. Assim como foram incorporadas habilidades e competências comportamentais. Em 2019, o projeto expandiu sua atuação, passando a ser chamado de Start (Latam), contando com o investimento direto da própria Accenture Foundation. Em âmbito nacional, o projeto acontece em Belo Horizonte e Recife e na América Latina na Argentina, México, Chile e Colômbia.')
       .setTimestamp()
@@ -88,9 +88,9 @@ client.on('messageCreate', async interaction => {
       title: arguments
     })
       .then((element) => {
-        if(element.deletedCount > 0){
+        if (element.deletedCount > 0) {
           interaction.channel.send('Link removido com sucesso!')
-        }else{
+        } else {
           interaction.channel.send('Link não encontrado na lista!')
 
         }
@@ -104,14 +104,18 @@ client.on('messageCreate', async interaction => {
 
       if (error) return
 
-      const linksArray = await array.map((element) => {
+      const linksArray = await array.map((element, index) => {
 
         const price = element.price <= 0 ?
           'GRÁTIS'
           :
-          'R$ ' + price
+          'R$ ' + element.price
 
-        return element.title + ' - ' + element.link + ' - ' + price + '\n'
+        if (index == 0) {
+          return element.title + ' - ' + element.link + ' - ' + price + '\n'
+        }
+
+        return element.title + ' - <' + element.link + '> - ' + price + '\n'
 
       })
 
