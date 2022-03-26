@@ -7,6 +7,7 @@ const puppeteer = require('puppeteer');
 const Link = require('./models/Links');
 const Meet = require('./models/Meet');
 const Todo = require('./models/Todo');
+const Users = require('./models/Users');
 
 client.on('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`);
@@ -16,6 +17,13 @@ async function main() {
   await mongoose.connect(process.env.URI);
 }
 
+async function getUserData(id) {
+
+  //vai retornar todos os dados do usuário, se ele n existir vai retornar um null
+  return await Users.findOne({ id: id })
+
+}
+
 main().then(() => console.log('MongoDB is working properly!')).catch(err => console.log(err));
 
 client.on('messageCreate', async interaction => {
@@ -23,7 +31,52 @@ client.on('messageCreate', async interaction => {
   const message = interaction.content.startsWith('st!') &&
     interaction.content.substring(3) || null
 
-  if (!message) return
+  if (!message || interaction.author.bot) return
+
+
+  //Cadastro de Usuário no MongoDB
+  const getUser = await getUserData(interaction.author.id)
+
+  if (!getUser) {
+
+    if (message.toLowerCase() == 'turma frontend') {
+
+      new Users({
+
+        id: interaction.author.id,
+        isAdmin: false,
+        course: 'Front-end'
+
+      }).save()
+
+      interaction.reply('Usuário registrado com sucesso!')
+
+      return
+
+    }
+
+    if (message.toLowerCase() == 'turma backend') {
+
+      new Users({
+
+        id: interaction.author.id,
+        isAdmin: false,
+        course: 'Back-end'
+
+      }).save()
+
+      interaction.reply('Usuário registrado com sucesso!')
+
+      return
+
+    }
+
+    interaction.reply('Informe a sua turma para continuar. \nResponda com o comando **st!turma frontend** ou **st!turma backend**')
+    return
+
+  }
+
+  //Fim do Cadastro
 
   if (message.toLowerCase() == 'help' || message.toLowerCase() == 'sobre' || message.toLowerCase() == 'ajuda') {
 

@@ -6,6 +6,10 @@ const LinkSchema = mongoose.Schema({
         type: String,
         unique: true
     },
+    
+    course: {
+        type: String
+    },
 
     link: {
         type: String

@@ -6,6 +6,10 @@ const TodoSchema = mongoose.Schema({
         type: String
     },
 
+    course: {
+        type: String
+    },
+
     date: {
         day: {
             type: Number
