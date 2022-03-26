@@ -120,6 +120,7 @@ client.on('messageCreate', async interaction => {
 
     const addLink = new Link({
       title: arguments[0],
+      course: getUser.course,
       link: arguments[1],
       price: arguments[2]
     }).save()
@@ -153,7 +154,7 @@ client.on('messageCreate', async interaction => {
 
   if (message.toLowerCase() == 'links') {
 
-    Link.find(async (error, array) => {
+    Link.find({course: getUser.course}, async (error, array) => {
 
       if (error) return
 
@@ -180,7 +181,7 @@ client.on('messageCreate', async interaction => {
 
   if (message.toLowerCase() == 'meet' || message.toLowerCase() == 'reunião' || message.toLowerCase() == 'palestra') {
 
-    Meet.find(function (err, arr) {
+    Meet.findOne({course: getUser.course}, function (err, arr) {
 
       if (err) return
 
@@ -237,6 +238,7 @@ client.on('messageCreate', async interaction => {
 
     new Todo({
       title: arguments[0],
+      course: getUser.course,
       date: {
 
         day: parseInt(day, 10),
@@ -252,7 +254,7 @@ client.on('messageCreate', async interaction => {
 
   if (message.toLowerCase() == 'board' || message.toLowerCase() == 'todo' || message.toLowerCase() == 'tarefas') {
 
-    Todo.find(async (error, array) => {
+    Todo.find({course: getUser.course}, async (error, array) => {
 
       if (error) return
 

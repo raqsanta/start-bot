@@ -6,6 +6,10 @@ const MeetSchema = mongoose.Schema({
         type: String
     },
 
+    course: {
+        type: String
+    },
+
     image: {
         type: String
     },
