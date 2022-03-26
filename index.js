@@ -173,7 +173,7 @@ client.on('messageCreate', async interaction => {
 
       })
 
-      interaction.channel.send('Lista de Cursos Salvos:\n' + linksArray.join(''))
+      interaction.channel.send('Lista de Cursos Salvos para '+getUser.course+':\n' + linksArray.join(''))
 
     })
 
@@ -183,7 +183,7 @@ client.on('messageCreate', async interaction => {
 
     Meet.findOne({course: getUser.course}, function (err, arr) {
 
-      if (err) return
+      if (err || !arr) return
 
       const image = arr[0].image.startsWith('https://') || arr[0].image.startsWith('http://') ?
         arr[0].image
@@ -282,7 +282,7 @@ client.on('messageCreate', async interaction => {
       })
 
       filterList &&
-        interaction.channel.send('Lista de Pendências:\n' + todoList.join('\n'))
+        interaction.channel.send('Lista de Pendências para '+getUser.course+':\n' + todoList.join('\n'))
 
     })
 
