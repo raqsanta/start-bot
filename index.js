@@ -154,7 +154,7 @@ client.on('messageCreate', async interaction => {
 
   if (message.toLowerCase() == 'links') {
 
-    Link.find({course: getUser.course}, async (error, array) => {
+    Link.find({ course: getUser.course }, async (error, array) => {
 
       if (error) return
 
@@ -173,7 +173,30 @@ client.on('messageCreate', async interaction => {
 
       })
 
-      interaction.channel.send('Lista de Cursos Salvos para '+getUser.course+':\n' + linksArray.join(''))
+      interaction.channel.send('Lista de Cursos Salvos para ' + getUser.course + ':\n' + linksArray.join(''))
+
+    })
+
+  }
+
+  if (message.toLowerCase() == 'editmeet ') {
+
+    const arguments = message.substring(9).split('$')
+
+    if (arguments.length != 5) {
+      interaction.channel.send('A sintaxe correta é **st!editmeet <data>$<url-imagem>$<titulo>$<descrição>$<link>**!')
+      return
+    }
+
+    Meet.findOneAndUpdate({ course: getUser.course }, {
+
+      title: 'Start ' + arguments[0],
+      image: arguments[1],
+      description: {
+        title: arguments[2],
+        text: arguments[3],
+        link: arguments[4],
+      }
 
     })
 
@@ -181,20 +204,20 @@ client.on('messageCreate', async interaction => {
 
   if (message.toLowerCase() == 'meet' || message.toLowerCase() == 'reunião' || message.toLowerCase() == 'palestra') {
 
-    Meet.findOne({course: getUser.course}, function (err, arr) {
+    Meet.findOne({ course: getUser.course }, function (err, arr) {
 
       if (err || !arr) return
 
-      const image = arr[0].image.startsWith('https://') || arr[0].image.startsWith('http://') ?
-        arr[0].image
+      const image = arr.image.startsWith('https://') || arr.image.startsWith('http://') ?
+        arr.image
         :
         ''
 
       const meetEmbed = new MessageEmbed()
         .setColor('#d94479')
-        .setTitle(arr[0].title)
-        .addField(arr[0].description.title,
-          arr[0].description.text + arr[0].description.link
+        .setTitle(arr.title)
+        .addField(arr.description.title,
+          arr.description.text + arr.description.link
         )
         .setImage(image)
         .setFooter({ text: 'Por Tathy do Start' });
@@ -254,7 +277,7 @@ client.on('messageCreate', async interaction => {
 
   if (message.toLowerCase() == 'board' || message.toLowerCase() == 'todo' || message.toLowerCase() == 'tarefas') {
 
-    Todo.find({course: getUser.course}, async (error, array) => {
+    Todo.find({ course: getUser.course }, async (error, array) => {
 
       if (error) return
 
@@ -282,7 +305,7 @@ client.on('messageCreate', async interaction => {
       })
 
       filterList &&
-        interaction.channel.send('Lista de Pendências para '+getUser.course+':\n' + todoList.join('\n'))
+        interaction.channel.send('Lista de Pendências para ' + getUser.course + ':\n' + todoList.join('\n'))
 
     })
 
