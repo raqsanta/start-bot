@@ -179,9 +179,11 @@ client.on('messageCreate', async interaction => {
 
   }
 
-  if (message.toLowerCase() == 'editmeet ') {
+  if (message.toLowerCase().startsWith('editmeet ')) {
 
     const arguments = message.substring(9).split('$')
+
+    console.log(arguments)
 
     if (arguments.length != 5) {
       interaction.channel.send('A sintaxe correta é **st!editmeet <data>$<url-imagem>$<titulo>$<descrição>$<link>**!')
@@ -196,9 +198,16 @@ client.on('messageCreate', async interaction => {
         title: arguments[2],
         text: arguments[3],
         link: arguments[4],
+
       }
 
+    }, { upsert: true }, (err) => {
+
+      return console.log('Succesfully saved!');
+
     })
+
+
 
   }
 
