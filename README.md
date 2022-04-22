@@ -1,3 +1,17 @@
+
+# o start
+O Projeto Start é um projeto que [eu](https://github.com/ggkei) participo como estudante da turma de Front-End. 
+
+# o bot
+De antemão, faz-se necessário avisar que esse bot não é gerido pelo Start ou Rede Cidadã, mas desenvolvido por e para os alunos. 
+Seu código é aberto e todos podem editar ou estudá-lo livremente.
+
+A principal ideia é que o bot disponha de comandos curtos que facilitem o trabalho dos usuários ao salvar links úteis para todos os alunos de uma mesma turma
+(tais como cursos gratuitos), visualizar rapidamente qual será o tema da palestra ou reunião do dia, e verificar quais atividades estão pendentes.
+
+
+![image](https://user-images.githubusercontent.com/98771718/164758539-765bf51a-4b17-4a8e-9246-b7b330792c07.png)
+
 # como iniciar
 
 Para que o bot funcione, você precisa, primeiramente, instalar o node.js.
