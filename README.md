@@ -1,6 +1,6 @@
 
 # o start
-O Projeto Start é um projeto que [eu](https://github.com/ggkei) participo como estudante da turma de Front-End. 
+O Projeto Start é um projeto que auxilia na trajetória da formação de jovens para a sua inserção e permanência no mundo do trabalho, tendo a qualificação técnico/profissional como uma ação fundamental. [Eu](https://github.com/ggkei) participo do Start como estudante da turma de Front-End. 
 
 # o bot
 De antemão, faz-se necessário avisar que esse bot não é gerido pelo Start ou Rede Cidadã, mas desenvolvido por e para os alunos. 
@@ -11,6 +11,9 @@ A principal ideia é que o bot disponha de comandos curtos que facilitem o traba
 
 
 ![image](https://user-images.githubusercontent.com/98771718/164758539-765bf51a-4b17-4a8e-9246-b7b330792c07.png)
+
+Você pode testá-lo o convidando através desse link:
+https://discord.com/api/oauth2/authorize?client_id=956230338688983130&permissions=2048&scope=bot
 
 # como iniciar
 
